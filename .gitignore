@@ -1,2 +1,6 @@
 django_project/__pycache__/
 stock/__pycache__/
+authentication/__pycache__/
+notes/__pycache__/
+authentication/migrations/
+notes/migrations/

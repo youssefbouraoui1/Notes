@@ -3,7 +3,9 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
 from .models import User
-from .serializers import UserSerializer
+from .dtos import UserSerializer
+from .dtos import CreateUserRequest
+
 
 
 @api_view(['GET'])
@@ -13,7 +15,7 @@ def get_users(request):
     return Response(serializer.data)
 
 @api_view(['POST'])
-def register(request):
+def register(request: CreateUserRequest):
     data = request.data
     email = data.get('email')
     if User.objects.filter(email=email).exists():
