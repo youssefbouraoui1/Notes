@@ -29,21 +29,10 @@ class OrganizationMember(BaseModel):
     joined_at = models.DateTimeField(auto_now_add=True)
     invited_by = models.ForeignKey(Users, on_delete=models.SET_NULL,null=True,blank=True, related_name='invitations')
 
+class Priority(models.TextChoices):
+        LOW ='LOW','Low'
+        MEDUIM = 'MEDUIM', 'Meduim'
+        HIGH = 'HIGH', 'High'
+        CRITICAL ='CRITICAL', 'Critical'
 
-class Project(BaseModel):
-    name = models.CharField(max_length=80)
-    slug = models.SlugField()
-    description = models.TextField(null=True,blank=True)
-    organization = models.ForeignKey(Organization, on_delete=models.CASCADE,related_name="projects")
-    created_by = models.ForeignKey(Users, on_delete=models.CASCADE,related_name="owned_projects")
-    members = models.ManyToManyField(Users, through='ProjectMember', related_name='projects')
-    created_at = models.DateTimeField(auto_now_add=True)
 
-class ProjectMember(BaseModel):
-    class Role(models.TextChoices):
-        TEAM_LEAD = 'TEAM_LEAD','Team Lead'
-        PROJECT_MANAGER = 'PROJECT_MANAGER', 'Project_Manager'
-        DEVELOPER = 'DEVELOPER','Developer'
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='project_members')
-    user = models.ForeignKey(Users, on_delete= models.CASCADE, related_name='projects_memberships')
-    role = models.CharField(choices=Role.choices, default=Role.DEVELOPER)
