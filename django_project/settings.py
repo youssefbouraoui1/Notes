@@ -42,7 +42,9 @@ INSTALLED_APPS = [
     'notes.apps.NotesConfig',
     'users.apps.UsersConfig',
     'organization',
-    'corsheaders'
+    'corsheaders',
+    'project',
+    'task'
 ]
 
 MIDDLEWARE = [

@@ -71,12 +71,12 @@ class Activity(BaseModel):
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
     description = models.TextField()
-    metadat = models.JSONField(null=True, blank=True)
+    metadata = models.JSONField(null=True, blank=True)
     ip_address = models.GenericIPAddressField(null=True,blank=True)
 
 
 class Notification(BaseModel):
-    recipient = models.ForeignKey(Users, on_delete=models.SET_NULL, related_name='received_notifications')
+    recipient = models.ForeignKey(Users, on_delete=models.SET_NULL, related_name='received_notifications', null=True)
     sender = models.ForeignKey(Users,on_delete=models.SET_NULL, null=True, related_name='sent_notification')
     title = models.CharField(max_length=255)
     message = models.TextField()
@@ -85,9 +85,12 @@ class Notification(BaseModel):
     created_at = models.DateTimeField(auto_now_add=True)
 
 class TimeLog(BaseModel):
-    user = models.ForeignKey(Users, on_delete=models.SET_NULL, related_name="time_logs")
-    task = models.ForeignKey(Task, on_delete=models.SET_NULL, related_name='time_logs')
+    user = models.ForeignKey(Users, on_delete=models.SET_NULL, related_name="time_logs", null=True)
+    task = models.ForeignKey(Task, on_delete=models.SET_NULL, related_name='time_logs', null=True)
     description = models.TextField()
-    hours_spent = models.DecimalField()
+    hours_spent = models.DecimalField(max_digits=5, decimal_places=2)
     date = models.DateField()
     created_at = models.DateTimeField(auto_now_add=True)
+
+class Sprint(BaseModel):
+    name = models.CharField(max_length=255)
