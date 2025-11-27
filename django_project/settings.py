@@ -36,15 +36,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'drf_yasg',
     'rest_framework',
     'rest_framework_simplejwt',
     'authentication.apps.AuthConfig',
-    'notes.apps.NotesConfig',
-    'users.apps.UsersConfig',
-    'organization',
+    'apps.users',
+    'apps.organization',
     'corsheaders',
-    'project',
-    'task'
+    'apps.project',
+    'apps.task',
+     'drf_spectacular',
+    'drf_spectacular_sidecar'
 ]
 
 MIDDLEWARE = [
@@ -116,8 +118,10 @@ REST_FRAMEWORK = {
     
     'DEFAULT_AUTHENTICATION_CLASSES': (
         
-        'users.customAuth.UUIDJWTAuthentication',
-    )
+        'apps.users.customAuth.UUIDJWTAuthentication',
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+
     
 }
 
@@ -149,3 +153,9 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_ROOT = BASE_DIR / 'media'  # physical folder on disk
 MEDIA_URL = '/media/'
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'My API',
+    'DESCRIPTION': 'API documentation',
+    'VERSION': '1.0.0',
+}
