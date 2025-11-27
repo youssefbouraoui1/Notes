@@ -1,14 +1,11 @@
-from django.shortcuts import render
-from rest_framework import generics, mixins, status
+from rest_framework import generics,status
 from .models import Users 
 from .serialzers import CreateUser, UserListSeriaizer, ResetPasswordRequest
 from rest_framework.decorators import api_view
-from rest_framework import authentication
 from rest_framework.response import Response
-from .authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
-from .customAuth import IsAuthenticatedCustom
-from django.contrib.auth.hashers import make_password, check_password
+from .serialzers import UUIDTokenRefreshSerializer
+from rest_framework_simplejwt.views import TokenRefreshView
+
 
 
 
@@ -18,7 +15,6 @@ from django.contrib.auth.hashers import make_password, check_password
 class UserListCreateUser(generics.ListCreateAPIView):
     queryset = Users.objects.all()
     serializer_class= CreateUser
-    permission_classes =[IsAuthenticatedCustom]
     def get_serializer_class(self):
         if self.request.method == 'POST':
             return CreateUser
@@ -101,3 +97,7 @@ def resetPassword(request):
 
     return Response({"success": "Password updated successfully"}, status=status.HTTP_200_OK)
     
+    
+    
+class UUIDTokenRefreshView(TokenRefreshView):
+    serializer_class = UUIDTokenRefreshSerializer
