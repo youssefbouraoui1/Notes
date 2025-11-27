@@ -30,7 +30,7 @@ class UserListSeriaizer(serializers.ModelSerializer):
         fields = ["id","email", "first_name","last_name","username","role"]
         
 
-class ResetPasswordRequest(serializers.Serializer):
+class ResetPasswordConfirmationRequest(serializers.Serializer):
     user_id = serializers.CharField()
     token = serializers.CharField()
     new_password = serializers.CharField()
@@ -52,8 +52,22 @@ class ResetPasswordRequest(serializers.Serializer):
         data["user"] = user
         return data
     
-def verify_reset_token(user,token):
-    return default_token_generator.check_token(user, token)
+class ResetPasswordRequest(serializers.Serializer):
+    user_id = serializers.CharField()
+    def validate(self, data):
+        try:
+            user_id =data["user_id"]
+        except Exception:
+            raise serializers.ValidationError("User Id is missing")
+        
+        try:
+            user = Users.objects.get(id=user_id)
+        except Users.DoesNotExist:
+            raise serializers.ValidationError("User not found.")
+
+        data["user"] = user
+        return data
+
 
 
 User = get_user_model()
@@ -91,3 +105,9 @@ class UUIDTokenRefreshSerializer(TokenRefreshSerializer):
             data["refresh"] = str(new_refresh)
 
         return data
+    
+    
+    
+    
+def verify_reset_token(user,token):
+    return default_token_generator.check_token(user, token)

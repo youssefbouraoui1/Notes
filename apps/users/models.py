@@ -28,7 +28,7 @@ class Users(BaseModel):
     email = models.EmailField(unique=True,null=False)
     is_active = models.BooleanField(default = False)
     date_joined = models.DateTimeField(default=timezone.now)
-    
+    last_login = models.DateTimeField(blank=True, null=True)
     
     
     def set_password(self, raw_password):
@@ -36,4 +36,6 @@ class Users(BaseModel):
     
     def check_password(self, raw_password):
         return check_password(raw_password, self.password)
+    def get_email_field_name(self):
+        return "email" 
     
