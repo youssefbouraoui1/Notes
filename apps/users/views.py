@@ -15,14 +15,20 @@ from django_project.constants import PASSWORD_RESET_URL, PASSWORD_RESET_MAIL_SEN
 from django.core.mail import send_mail
 from rest_framework.permissions import AllowAny
 from django.utils import timezone
-
+from .customAuth import RoleRequired
 
 class UserListCreateUser(generics.ListCreateAPIView):
     queryset = Users.objects.all()
     serializer_class= CreateUser
+    def get_permissions(self):
+        if self.request.method == "GET":
+            AdminOrManager = RoleRequired.with_roles("ADMIN", "MANAGER")
+            return [AdminOrManager()]
+        
+        return super().get_permissions()
     def get_serializer_class(self):
         if self.request.method == 'POST':
-            return CreateUser
+            return CreateUser  
         return UserListSeriaizer
     
 
@@ -110,8 +116,6 @@ def resetPasswordConfirmation(request):
     
 
 @api_view(["POST"])
-@permission_classes([AllowAny])
-@authentication_classes([])
 def reset_password_request(request):
     serializer = ResetPasswordRequest(data = request.data)
     serializer.is_valid(raise_exception=True)

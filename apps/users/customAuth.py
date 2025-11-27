@@ -31,6 +31,23 @@ class UUIDJWTAuthentication(JWTAuthentication):
         except Users.DoesNotExist:
             return None
 
+class RoleRequired(BasePermission):
+    allowed_roles = []
+
+    @classmethod
+    def with_roles(cls, *roles):
+        class CustomRoleRequired(cls):
+            allowed_roles = roles
+        return CustomRoleRequired
+
+    def has_permission(self, request, view):
+        user = request.user
+
+        if not user or not isinstance(user, Users):
+            return False
+
+        return user.role in self.allowed_roles
+
 
 
 
