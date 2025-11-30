@@ -5,6 +5,8 @@ from django.utils.text import slugify
 
 
 class CreateOrganization(serializers.ModelSerializer):
+    owner_user_id = serializers.UUIDField(write_only=True)
+
     class Meta:
         model = Organization
         fields = ["name","owner_user_id","description"]
@@ -24,6 +26,13 @@ class CreateOrganization(serializers.ModelSerializer):
             **validated_data
         )
         
+        OrganizationMember.objects.create(
+            organization=org,
+            member=owner,
+            role=OrganizationMember.Role.OWNER,
+            invited_by=None 
+        )
+        
         return org
     
 
@@ -31,6 +40,14 @@ class OrganizationList(serializers.ModelSerializer):
     class Meta:
         models = Organization
         fields = ["name","slug","description","logo","owner"]
+
+
+class UpdateOrganization(serializers.ModelSerializer):
+    logo = serializers.ImageField(required=False, allow_null=True)
+    class Meta:
+        model = Organization
+        fields = ["name","description","logo","slug"]
+        read_only_fields = ["updated_at"]
 
 class SendInvitationRequest(serializers.Serializer):
     sender_id = serializers.CharField()

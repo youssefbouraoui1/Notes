@@ -16,6 +16,8 @@ class Organization(BaseModel):
     members = models.ManyToManyField(Users,through='OrganizationMember', related_name='organizations', through_fields=('organization','member'))
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now = True)
+    class Meta:
+        db_table = "organizations"
     
 
 class OrganizationMember(BaseModel):
@@ -28,6 +30,8 @@ class OrganizationMember(BaseModel):
     role = models.CharField(choices=Role.choices, default=Role.MEMBER)
     joined_at = models.DateTimeField(auto_now_add=True)
     invited_by = models.ForeignKey(Users, on_delete=models.SET_NULL,null=True,blank=True, related_name='invitations')
+    class Meta:
+        db_table = "organization_members"
 
 class Priority(models.TextChoices):
         LOW ='LOW','Low'
