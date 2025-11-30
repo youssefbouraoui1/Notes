@@ -48,6 +48,26 @@ class UpdateOrganization(serializers.ModelSerializer):
         model = Organization
         fields = ["name","description","logo","slug"]
         read_only_fields = ["updated_at"]
+        
+
+class OrganizationMemberSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source = 'member.username', read_only = True)
+    full_name = serializers.SerializerMethodField()
+    email = serializers.CharField(source = 'member.email', read_only = True)
+    
+    class Meta:
+        model = OrganizationMember
+        fields = [
+            "id",
+            "full_name",
+            "username",
+            "email",
+            "role",  
+            "joined_at"
+        ]
+        
+    def get_full_name(self, obj):
+        return f"{obj.member.first_name} {obj.member.last_name}"
 
 class SendInvitationRequest(serializers.Serializer):
     sender_id = serializers.CharField()
