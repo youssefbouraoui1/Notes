@@ -9,12 +9,20 @@ from django_project.constants import FRONTEND_BASE_URL, ORGANIZATION_INVITATION_
 from rest_framework.response import Response
 from django.core.mail import send_mail
 from .pagination import OrganizationCursorPagination, OrganizationMemebersPagination
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 
 # we should only retrieve the organization that the user is related to
 class ListCreateOrganization(generics.ListCreateAPIView):
     queryset = Organization.objects.all().order_by("-created_at")
     permission_classes = [IsAuthenticatedCustom]
     pagination_class = OrganizationCursorPagination
+    
+    @method_decorator(cache_page(60*15))  
+    def get(self, *args, **kwargs):
+        #the list of organization should be per user so the key of the cache should be updated 
+        return super().get(*args, **kwargs)
+    
     def get_serializer_class(self):
         if self.request.method == "POST":
             return CreateOrganization
@@ -66,6 +74,7 @@ class ListOrganizationMembers(generics.ListAPIView):
     pagination_class = OrganizationMemebersPagination
     serializer_class = OrganizationMemberSerializer
     
+    @method_decorator()
     def get_queryset(self):
         slug = self.kwargs["slug"]
 
@@ -82,7 +91,8 @@ class RemoveMemberFromOrganization(generics.DestroyAPIView):
         
         try:
             return OrganizationMember.objects.get(
-                id = member_id
+                id = member_id,
+                slug=slug
             )
         except OrganizationMember.DoesNotExist:
             return None

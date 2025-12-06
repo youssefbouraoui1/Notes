@@ -170,3 +170,13 @@ EMAIL_HOST_USER = "tt6677798@gmail.com"
 EMAIL_HOST_PASSWORD = "hnqj hxca iuxz avll"
 
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/1',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            "COMPRESSOR": "django_redis.compressors.zlib.ZlibCompressor",
+        }
+    }
+}
