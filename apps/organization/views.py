@@ -11,6 +11,7 @@ from django.core.mail import send_mail
 from .pagination import OrganizationCursorPagination, OrganizationMemebersPagination
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
+from django.core.cache import cache
 
 # we should only retrieve the organization that the user is related to
 class ListCreateOrganization(generics.ListCreateAPIView):
@@ -18,10 +19,18 @@ class ListCreateOrganization(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticatedCustom]
     pagination_class = OrganizationCursorPagination
     
-    @method_decorator(cache_page(60*15))  
-    def get(self, *args, **kwargs):
-        #the list of organization should be per user so the key of the cache should be updated 
-        return super().get(*args, **kwargs)
+    def get(self, request, *args, **kwargs):
+        user = request.user  
+        cursor = request.GET.get("cursor", "first")
+        cache_key = f"orgs:{user.id}:{cursor}"
+
+        cached_data = cache.get(cache_key)
+        if cached_data:
+            return Response(cached_data)
+
+        response = super().get(request, *args, **kwargs)
+        cache.set(cache_key, response.data, 60 * 15)
+        return response
     
     def get_serializer_class(self):
         if self.request.method == "POST":
@@ -74,7 +83,6 @@ class ListOrganizationMembers(generics.ListAPIView):
     pagination_class = OrganizationMemebersPagination
     serializer_class = OrganizationMemberSerializer
     
-    @method_decorator()
     def get_queryset(self):
         slug = self.kwargs["slug"]
 

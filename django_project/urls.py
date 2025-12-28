@@ -35,5 +35,5 @@ urlpatterns = [
     path('api/v1/auth', include('authentication.urls')),
     path('api/v1/users/', include('apps.users.urls')),
     path('api/v1/organizations/',include('apps.organization.urls')),
-    path('api/v1/projects/',include('apps.projects.urls'))
+    path('api/v1/projects/',include('apps.project.urls'))
 ]

@@ -47,3 +47,8 @@ class CreateProjetSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Project already exist with that slug")
         
         return data 
+
+class ProjectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Project
+        fields = ['name', 'description', 'slug', 'progress_percentage','status','priority']

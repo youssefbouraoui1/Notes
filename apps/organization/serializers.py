@@ -38,8 +38,8 @@ class CreateOrganization(serializers.ModelSerializer):
 
 class OrganizationList(serializers.ModelSerializer):
     class Meta:
-        models = Organization
-        fields = ["name","slug","description","logo","owner"]
+        model = Organization
+        fields = ["id","name","slug","description","logo","owner"]
 
 
 class UpdateOrganization(serializers.ModelSerializer):
